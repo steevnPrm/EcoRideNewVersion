@@ -1,0 +1,68 @@
+classDiagram
+    class User {
+        + string email
+        + string password
+        + string username
+    }
+
+    class RegisterUserUseCaseInterface {
+        <<interface>>
+        + execute()*
+    }
+
+    class RegisterUserUseCase {
+        - userFactory: UserFactory
+        - passwordManager: PasswordManagerInterface
+        - userRepository : UserRepositoryInterface
+        + execute()
+    }
+
+    class UserFactory {
+        + create(Email, Password, Username) User
+    }
+
+    class EmailVo {
+        - value: string
+        + isString() boolean
+        + isEmail() boolean
+    }
+
+    class UsernameVo {
+        - value: string
+        + isString() boolean
+    }
+
+    class PasswordVo {
+        - value: string
+        + isString() boolean
+    }
+
+    class PasswordManager {
+        + hash(password: string) string
+    }
+
+    class PasswordManagerInterface {
+        <<interface>>
+        + hash(password: string) string
+    }
+    
+    class UserRepository{
+	    persistUser(user: User) : void
+    }
+    
+    class UserRepositoryInterface{
+		    <<interface>>
+		  persistUser(user: User) : void
+    }
+
+    
+    RegisterUserUseCase --|> RegisterUserUseCaseInterface : implements
+    RegisterUserUseCase --> UserFactory : depends
+    RegisterUserUseCase --> PasswordManagerInterface : depends
+    UserFactory --> EmailVo : depends
+    UserFactory --> PasswordVo : depends
+    UserFactory --> UsernameVo : depends
+    UserFactory --> User : creates
+    PasswordManager --|> PasswordManagerInterface : implements
+    UserRepository--|> UserRepositoryInterface : implements
+    RegisterUserUseCase --> UserRepositoryInterface : depends
